@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluentgrid PMO — Project Cybersecurity Tracker</title>
+<style>
+:root {
+  --background: 0 0% 100%; --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%; --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%; --popover-foreground: 240 10% 3.9%;
+  --primary: 168 76% 36%; --primary-foreground: 0 0% 100%;
+  --secondary: 240 4.8% 95.9%; --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%; --muted-foreground: 240 3.8% 46.1%;
+  --accent: 199 89% 35%; --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%; --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%; --input: 240 5.9% 90%; --ring: 168 76% 36%;
+  --radius: 0.75rem; --radius-sm: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.dark {
+  --background: 240 10% 3.9%; --foreground: 0 0% 98%;
+  --card: 240 10% 5.5%; --card-foreground: 0 0% 98%;
+  --popover: 240 10% 5.5%; --popover-foreground: 0 0% 98%;
+  --primary: 168 64% 45%; --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%; --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%; --muted-foreground: 240 5% 64.9%;
+  --accent: 199 89% 48%; --accent-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 50%; --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%; --input: 240 3.7% 15.9%; --ring: 168 64% 45%;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:hsl(var(--background));color:hsl(var(--foreground));font-size:0.875rem;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+
+/* Header */
+.header{position:sticky;top:0;z-index:50;border-bottom:1px solid hsl(var(--border));background:hsl(var(--background)/.85);backdrop-filter:blur(12px)}
+.header-inner{max-width:1500px;margin:0 auto;padding:0 1.5rem;height:4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{display:flex;align-items:center;gap:.75rem;font-weight:800;font-size:1.25rem;letter-spacing:-.02em}
+.brand-mark{width:2rem;height:2rem;border-radius:var(--radius);background:linear-gradient(135deg,hsl(var(--primary)),hsl(var(--accent)));display:grid;place-items:center;color:#fff;font-weight:900;font-size:.875rem}
+.user-info{display:flex;align-items:center;gap:.75rem}
+.user-chip{display:flex;align-items:center;gap:.75rem;padding:.25rem .75rem .25rem .25rem;border-radius:9999px;border:1px solid hsl(var(--border));background:hsl(var(--card))}
+.avatar{width:1.75rem;height:1.75rem;border-radius:9999px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));display:grid;place-items:center;font-size:.75rem;font-weight:700}
+.icon-btn{width:2.25rem;height:2.25rem;border-radius:var(--radius-sm);display:grid;place-items:center;border:1px solid hsl(var(--border));background:transparent;color:hsl(var(--foreground));cursor:pointer;transition:.15s}
+.icon-btn:hover{background:hsl(var(--muted))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:2.5rem;padding:0 1rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;border:1px solid transparent;cursor:pointer;transition:.15s}
+.btn-primary{background:hsl(var(--primary));color:hsl(var(--primary-foreground))}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-secondary{background:hsl(var(--secondary));color:hsl(var(--secondary-foreground))}
+.btn-secondary:hover{background:hsl(var(--muted))}
+.btn-outline{background:transparent;border-color:hsl(var(--border));color:hsl(var(--foreground))}
+.btn-outline:hover{background:hsl(var(--muted))}
+.btn-destructive{background:hsl(var(--destructive));color:hsl(var(--destructive-foreground))}
+.btn-sm{height:2rem;padding:0 .75rem;font-size:.75rem}
+
+/* Tabs */
+.tabs-bar{position:sticky;top:4rem;z-index:40;border-bottom:1px solid hsl(var(--border));background:hsl(var(--background)/.95);backdrop-filter:blur(8px)}
+.tabs{max-width:1500px;margin:0 auto;padding:0 1.5rem;display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{position:relative;padding:.875rem 1rem;font-size:.875rem;font-weight:500;color:hsl(var(--muted-foreground));cursor:pointer;white-space:nowrap;border:none;background:transparent}
+.tab:hover{color:hsl(var(--foreground))}
+.tab.active{color:hsl(var(--foreground))}
+.tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:hsl(var(--primary));border-radius:2px 2px 0 0}
+
+/* Main */
+.main{max-width:1500px;margin:0 auto;padding:1.5rem}
+.section{display:none;animation:fadeIn .25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* Cards */
+.card{background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid hsl(var(--border));gap:1rem}
+.card-title{font-size:1.125rem;font-weight:600;letter-spacing:-.01em}
+.card-description{font-size:.875rem;color:hsl(var(--muted-foreground));margin-top:.25rem}
+.card-content{padding:1.5rem}
+
+/* Grid */
+.grid{display:grid;gap:1.5rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.grid-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:1100px){.grid-4,.grid-5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}}
+
+/* KPI */
+.kpi-card{padding:1.25rem}
+.kpi-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem}
+.kpi-icon{width:2rem;height:2rem;border-radius:var(--radius-sm);display:grid;place-items:center;background:hsl(var(--muted));color:hsl(var(--foreground))}
+.kpi-label{font-size:.875rem;font-weight:500;color:hsl(var(--muted-foreground))}
+.kpi-value{font-size:1.875rem;font-weight:700;letter-spacing:-.02em;margin-top:.25rem}
+
+/* Tables */
+.table-container{overflow:auto;border:1px solid hsl(var(--border));border-radius:var(--radius-lg);background:hsl(var(--card))}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{text-align:left;padding:.75rem 1rem;font-weight:500;color:hsl(var(--muted-foreground));border-bottom:1px solid hsl(var(--border));background:hsl(var(--muted));white-space:nowrap}
+td{padding:.875rem 1rem;border-bottom:1px solid hsl(var(--border));vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:hsl(var(--muted)/.5)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:.125rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.badge-overdue{background:hsl(0 84% 60%/.12);color:hsl(0 84% 50%);border-color:hsl(0 84% 60%/.2)}
+.badge-due_soon{background:hsl(38 92% 50%/.12);color:hsl(32 95% 35%);border-color:hsl(38 92% 50%/.2)}
+.badge-valid{background:hsl(142 76% 36%/.12);color:hsl(142 76% 30%);border-color:hsl(142 76% 36%/.2)}
+.badge-adhoc{background:hsl(var(--muted));color:hsl(var(--muted-foreground));border-color:hsl(var(--border))}
+.badge-external_vapt{background:hsl(0 84% 60%/.12);color:hsl(0 84% 50%);border-color:hsl(0 84% 60%/.2)}
+.badge-internal_vapt{background:hsl(217 91% 60%/.12);color:hsl(221 83% 53%);border-color:hsl(217 91% 60%/.2)}
+.badge-patch_mgmt{background:hsl(25 95% 53%/.12);color:hsl(25 95% 40%);border-color:hsl(25 95% 53%/.2)}
+.badge-discom_audit{background:hsl(270 50% 50%/.12);color:hsl(270 50% 40%);border-color:hsl(270 50% 50%/.2)}
+.badge-dpdp_audit{background:hsl(330 70% 50%/.12);color:hsl(330 70% 40%);border-color:hsl(330 70% 50%/.2)}
+.badge-iso27001_audit{background:hsl(199 89% 40%/.12);color:hsl(199 89% 30%);border-color:hsl(199 89% 40%/.2)}
+.badge-cloud_review{background:hsl(188 80% 40%/.12);color:hsl(188 80% 30%);border-color:hsl(188 80% 40%/.2)}
+.badge-other{background:hsl(var(--muted));color:hsl(var(--muted-foreground));border-color:hsl(var(--border))}
+
+/* Status dot */
+.status-dot{width:.625rem;height:.625rem;border-radius:50%;display:inline-block}
+.status-dot.overdue{background:hsl(0 84% 60%)}
+.status-dot.due_soon{background:hsl(38 92% 50%)}
+.status-dot.valid{background:hsl(142 76% 36%)}
+.status-dot.adhoc{background:hsl(var(--muted-foreground))}
+
+/* Matrix */
+.matrix-col{min-width:7rem;text-align:center}
+.matrix-cell{text-align:center;cursor:pointer}
+.matrix-cell:hover{background:hsl(var(--muted))}
+.matrix-row-detail{display:none;background:hsl(var(--muted)/.3)}
+.matrix-row-detail.show{display:table-row}
+
+/* Deliverable cards */
+.deliv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1rem}
+.deliv-card{border-left:3px solid hsl(var(--border));padding:1.25rem;display:flex;flex-direction:column;gap:.875rem}
+.deliv-card.overdue{border-left-color:hsl(0 84% 60%)}
+.deliv-card.due_soon{border-left-color:hsl(38 92% 50%)}
+.deliv-card.valid{border-left-color:hsl(142 76% 36%)}
+.deliv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+.deliv-title{font-size:1rem;font-weight:700}
+.deliv-meta{font-size:.75rem;color:hsl(var(--muted-foreground));display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.deliv-life{position:relative;height:.5rem;background:hsl(var(--muted));border-radius:9999px;overflow:visible;margin:.5rem 0}
+.deliv-fill{position:absolute;left:0;top:0;height:100%;border-radius:9999px}
+.deliv-today{position:absolute;top:50%;width:.75rem;height:.75rem;border-radius:50%;background:hsl(var(--card));border:2px solid hsl(var(--foreground));transform:translate(-50%,-50%);box-shadow:var(--shadow-sm)}
+.deliv-dates{display:flex;justify-content:space-between;font-size:.75rem;margin-top:.25rem}
+.deliv-dates .k{color:hsl(var(--muted-foreground));text-transform:uppercase;letter-spacing:.04em;font-weight:600;display:block}
+.deliv-actions{display:flex;gap:.5rem;margin-top:auto;padding-top:.75rem;border-top:1px solid hsl(var(--border))}
+.deliv-group{display:flex;align-items:center;gap:.75rem;margin:1.5rem 0 .75rem}
+.deliv-group .gt{font-size:.875rem;font-weight:700}
+.deliv-group .gc{font-size:.75rem;font-weight:700;padding:.125rem .5rem;border-radius:9999px;background:hsl(var(--muted));color:hsl(var(--muted-foreground))}
+.deliv-group .gline{flex:1;height:1px;background:hsl(var(--border))}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:hsl(240 10% 3.9%/.6);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex;animation:fadeIn .2s ease}
+.modal{background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius-lg);width:100%;max-width:34rem;max-height:90vh;overflow:auto;box-shadow:var(--shadow-lg)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid hsl(var(--border))}
+.modal-title{font-size:1.125rem;font-weight:600}
+.modal-body{padding:1.5rem}
+.modal-footer{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid hsl(var(--border))}
+
+/* Forms */
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.375rem}
+.field label{font-size:.875rem;font-weight:500}
+.field input,.field select,.field textarea{height:2.5rem;padding:0 .75rem;border-radius:var(--radius-sm);border:1px solid hsl(var(--input));background:hsl(var(--background));color:hsl(var(--foreground));font-size:.875rem;transition:.15s}
+.field textarea{height:auto;min-height:5rem;padding:.75rem;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:hsl(var(--ring));box-shadow:0 0 0 2px hsl(var(--ring)/.2)}
+.field-note{font-size:.75rem;color:hsl(var(--muted-foreground));margin-top:.25rem}
+
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.filter-select{padding:.5rem .75rem;border-radius:var(--radius-sm);border:1px solid hsl(var(--border));background:hsl(var(--background));color:hsl(var(--foreground));font-size:.875rem}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;padding:.875rem 1.25rem;border-radius:var(--radius-sm);background:hsl(var(--foreground));color:hsl(var(--background));box-shadow:var(--shadow-lg);font-size:.875rem;font-weight:500;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(1rem);opacity:0}to{transform:none;opacity:1}}
+
+/* Empty */
+.empty{text-align:center;padding:3rem 1rem;color:hsl(var(--muted-foreground))}
+
+/* Loading */
+.loading{text-align:center;padding:5rem 1rem;color:hsl(var(--muted-foreground))}
+.spinner{width:2.5rem;height:2.5rem;border:3px solid hsl(var(--border));border-top-color:hsl(var(--primary));border-radius:9999px;animation:spin 1s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Progress */
+.progress{height:.5rem;background:hsl(var(--muted));border-radius:9999px;overflow:hidden;margin-top:.375rem}
+.progress-fill{height:100%;background:hsl(var(--primary));border-radius:9999px;transition:width .5s ease}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand"><img src="/logo" alt="Fluentgrid" style="height:2.25rem"><div><span>fluentgrid</span> <span style="color:hsl(var(--primary))">PMO Security</span></div></div>
+    <div class="user-info">
+      <button class="icon-btn" id="themeToggle" title="Toggle theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+      <div class="user-chip">
+        <div class="avatar" id="userAvatar">U</div>
+        <div style="line-height:1.1"><div class="font-semibold" id="userEmail" style="font-size:.875rem">—</div><div class="text-muted" id="userRole" style="font-size:.75rem">—</div></div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-bar">
+  <div class="tabs">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="projects">Projects</button>
+    <button class="tab" data-tab="matrix">Project Security Matrix</button>
+    <button class="tab" data-tab="deliverables">Deliverables</button>
+    <button class="tab" data-tab="tasks">Security Tasks</button>
+    <button class="tab" data-tab="vulns">Vulnerabilities</button>
+    <button class="tab" data-tab="incidents">Incidents</button>
+    <button class="tab" data-tab="risks">Risks</button>
+    <button class="tab" data-tab="compliance">Compliance</button>
+  </div>
+</div>
+
+<main class="main">
+
+  <section class="section active" id="overview">
+    <div class="loading" id="overviewLoading"><div class="spinner"></div><p>Loading project security posture…</p></div>
+    <div id="overviewContent" style="display:none">
+      <div class="grid grid-5" id="kpiGrid"></div>
+      <div class="grid grid-2" style="margin-top:1.5rem">
+        <div class="card"><div class="card-header"><div class="card-title">Projects with Overdue Deliverables</div></div><div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>Project</th><th>Overdue</th><th>Due Soon</th></tr></thead><tbody id="overdueProjects"></tbody></table></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Deliverable Category Status</div></div><div class="card-content" id="categorySummary"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Projects</div><div class="card-description">Project details and delivery timeline</div></div>
+        <button class="btn btn-primary btn-sm admin-only" onclick="openProjectModal()" style="display:none">+ Add Project</button>
+      </div>
+      <div class="card-content" style="padding:0">
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Project</th><th>BU / Vertical</th><th>Type</th><th>Infra Managed By</th><th>Project Manager / SPOC</th><th>Progress</th><th>Status</th><th>Start Date</th><th>End Date</th><th>Team</th></tr></thead>
+            <tbody id="projectsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="matrix">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Project Security Matrix</div><div class="card-description">Each project's cybersecurity requirement status at a glance</div></div></div>
+      <div class="card-content" style="padding:0">
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Project</th><th>BU</th><th>Type</th><th class="matrix-col">External VAPT</th><th class="matrix-col">Internal VAPT</th><th class="matrix-col">Patch Mgmt</th><th class="matrix-col">DISCOM Audit</th><th class="matrix-col">DPDP</th><th class="matrix-col">ISO 27001</th><th class="matrix-col">Cloud Review</th></tr></thead>
+            <tbody id="matrixTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="deliverables">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Project Security Deliverables</div><div class="card-description">Recurring cybersecurity obligations lifecycle tracker</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openDelivModal()">+ Add Deliverable</button>
+      </div>
+      <div class="card-content" style="padding:0">
+        <div style="padding:1rem 1.5rem;border-bottom:1px solid hsl(var(--border));display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+          <span class="text-muted" style="font-size:.875rem;font-weight:500">Filter:</span>
+          <select class="filter-select" id="delivFilter" onchange="renderDeliverables()"><option value="all">All categories</option></select>
+        </div>
+        <div class="card-content" id="deliverablesContent" style="background:hsl(var(--background))"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tasks">
+    <div class="card"><div class="card-header"><div><div class="card-title">Security Tasks</div><div class="card-description">To do and completed security work</div></div><button class="btn btn-primary btn-sm" onclick="openTaskModal()">+ Add Task</button></div>
+      <div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>Task</th><th>Project</th><th>Category</th><th>Status</th><th>Severity</th><th>Assignee</th><th>Start</th><th>Due</th><th>Completed</th><th style="text-align:right">Actions</th></tr></thead><tbody id="tasksTable"></tbody></table></div></div></div>
+  </section>
+
+  <section class="section" id="vulns"><div class="card"><div class="card-header"><div class="card-title">Vulnerabilities</div></div><div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>CVE</th><th>Asset</th><th>Severity</th><th>CVSS</th><th>Status</th><th>Discovered</th><th>Remediated</th><th>Owner</th></tr></thead><tbody id="vulnsTable"></tbody></table></div></div></div></section>
+
+  <section class="section" id="incidents"><div class="card"><div class="card-header"><div class="card-title">Security Incidents</div></div><div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>Incident</th><th>Severity</th><th>Status</th><th>Reported</th><th>Closed</th><th>Owner</th><th>Root Cause</th></tr></thead><tbody id="incidentsTable"></tbody></table></div></div></div></section>
+
+  <section class="section" id="risks"><div class="card"><div class="card-header"><div class="card-title">Risk Register</div></div><div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>Risk ID</th><th>Title</th><th>Likelihood</th><th>Impact</th><th>Score</th><th>Status</th><th>Mitigation</th><th>Owner</th></tr></thead><tbody id="risksTable"></tbody></table></div></div></div></section>
+
+  <section class="section" id="compliance"><div class="card"><div class="card-header"><div class="card-title">Compliance Status</div></div><div class="card-content" style="padding:0"><div class="table-container"><table><thead><tr><th>Framework</th><th>Requirement</th><th>Status</th><th>Evidence</th><th>Owner</th><th>Due</th><th>Completed</th></tr></thead><tbody id="complianceTable"></tbody></table></div></div></div></section>
+
+</main>
+
+<div class="modal-overlay" id="delivModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="delivModalTitle">Add Deliverable</div><button class="icon-btn" onclick="closeDelivModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="delivId">
+      <div class="field" style="grid-column:1/-1"><label>Deliverable name</label><input type="text" id="delivName" placeholder="e.g. External VAPT (CERT-In empaneled)"></div>
+      <div class="form-grid">
+        <div class="field"><label>Project</label><select id="delivProject"></select></div>
+        <div class="field"><label>Category</label><select id="delivCategory" onchange="onDelivCatChange()"><option value="external_vapt">External VAPT</option><option value="internal_vapt">Internal VAPT</option><option value="patch_mgmt">Patch Management</option><option value="discom_audit">DISCOM Cybersecurity Audit</option><option value="dpdp_audit">DPDP Compliance Review</option><option value="iso27001_audit">ISO 27001 Internal Audit</option><option value="cloud_review">Cloud Security Review</option><option value="other">Other</option></select></div>
+        <div class="field"><label>Frequency</label><select id="delivFreq"><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="halfyearly">Half-yearly</option><option value="annual">Annual</option><option value="biennial">Biennial</option><option value="adhoc">Ad-hoc</option></select></div>
+        <div class="field"><label>Performed by</label><select id="delivExec"><option value="internal">Internal team</option><option value="thirdparty">Third party / CERT-In empaneled</option></select></div>
+        <div class="field"><label>Last performed</label><input type="date" id="delivLast"></div>
+        <div class="field"><label>Reminder (days before due)</label><input type="number" id="delivReminder" value="30" min="0" max="365"></div>
+        <div class="field" style="grid-column:1/-1"><label>Owner</label><input type="text" id="delivOwner" placeholder="Responsible person / team"></div>
+        <div class="field" style="grid-column:1/-1"><label>Scope</label><input type="text" id="delivScope" placeholder="e.g. Internet-facing apps, APIs, AMI endpoints"></div>
+        <div class="field" style="grid-column:1/-1"><label>Remarks</label><textarea id="delivRemarks" placeholder="Status notes, vendor details, dependencies…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeDelivModal()">Cancel</button><button class="btn btn-primary" onclick="saveDeliv()">Save</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="taskModalTitle">Add Security Task</div><button class="icon-btn" onclick="closeTaskModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="taskId">
+      <div class="form-grid">
+        <div class="field" style="grid-column:1/-1"><label>Title</label><input type="text" id="taskTitle" placeholder="e.g. Patch critical servers"></div>
+        <div class="field"><label>Project</label><select id="taskProject"><option value="">— Global IT Security —</option></select></div>
+        <div class="field"><label>Category</label><select id="taskCategory"><option value="general">General</option><option value="compliance">Compliance</option><option value="hardening">Hardening</option><option value="patching">Patching</option><option value="access_review">Access Review</option><option value="vulnerability">Vulnerability</option><option value="monitoring">Monitoring</option><option value="training">Training</option><option value="review">Review</option><option value="testing">Testing</option></select></div>
+        <div class="field"><label>Status</label><select id="taskStatus"><option value="todo">To Do</option><option value="in_progress">In Progress</option><option value="done">Done</option></select></div>
+        <div class="field"><label>Severity</label><select id="taskSeverity"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="crit">Critical</option></select></div>
+        <div class="field"><label>Assignee</label><input type="text" id="taskAssignee" placeholder="Owner name"></div>
+        <div class="field"><label>Start Date</label><input type="date" id="taskStartDate"></div>
+        <div class="field"><label>Due Date</label><input type="date" id="taskDueDate"></div>
+        <div class="field"><label>Completed Date</label><input type="date" id="taskCompletedDate"></div>
+      </div>
+      <div class="field" style="margin-top:1rem"><label>Notes</label><textarea id="taskNotes" placeholder="Additional details…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeTaskModal()">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Save Task</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="projectModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="projectModalTitle">Add Project</div><button class="icon-btn" onclick="closeProjectModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="projectId">
+      <div class="form-grid">
+        <div class="field" style="grid-column:1/-1"><label>Project Name</label><input type="text" id="projectName" placeholder="e.g. SBPDCL AMI"></div>
+        <div class="field"><label>BU / Vertical</label><input type="text" id="projectBU" placeholder="e.g. AMI"></div>
+        <div class="field"><label>Project Type</label><input type="text" id="projectType" placeholder="e.g. Implementation"></div>
+        <div class="field"><label>Infra Managed By</label><input type="text" id="projectInfra" placeholder="e.g. Client / Fluentgrid"></div>
+        <div class="field" style="grid-column:1/-1"><label>Project Manager / SPOC</label><input type="text" id="projectSPOC" placeholder="e.g. Aditya Vijay"></div>
+        <div class="field"><label>Status</label><select id="projectStatus"><option value="ontrack">On Track</option><option value="atrisk">At Risk</option><option value="delayed">Delayed</option><option value="onhold">On Hold</option><option value="pending">Pending</option><option value="done">Done</option></select></div>
+        <div class="field"><label>Progress (%)</label><input type="number" id="projectProgress" min="0" max="100" value="0"></div>
+        <div class="field"><label>Start Date</label><input type="date" id="projectStart"></div>
+        <div class="field"><label>End Date</label><input type="date" id="projectEnd"></div>
+        <div class="field"><label>Team Size</label><input type="number" id="projectTeam" min="0" value="0"></div>
+        <div class="field"><label>Budget (Lakhs)</label><input type="number" id="projectBudget" min="0" value="0"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeProjectModal()">Cancel</button><button class="btn btn-primary" onclick="saveProject()">Save Project</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const token = localStorage.getItem('auth_token');
+const userEmail = localStorage.getItem('user_email') || 'user@fluentgrid.com';
+const userRole = localStorage.getItem('user_role') || 'admin';
+if(!token){ window.location.href='/login'; return; }
+
+document.getElementById('userEmail').textContent = userEmail;
+document.getElementById('userRole').textContent = userRole;
+document.getElementById('userAvatar').textContent = (userEmail.charAt(0) || 'U').toUpperCase();
+
+if(userRole === 'admin'){
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-flex');
+}
+
+const savedTheme = localStorage.getItem('fg_theme') || 'light';
+document.documentElement.className = savedTheme;
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const html = document.documentElement;
+  const next = html.classList.contains('dark') ? 'light' : 'dark';
+  html.className = next; localStorage.setItem('fg_theme', next);
+});
+
+let appData = {projects:[], deliverables:[], security:{tasks:[], controls:[], vulnerabilities:[], incidents:[], risks:[], compliance:[]}};
+const CATEGORIES = {
+  external_vapt:{label:'External VAPT', desc:'CERT-In empaneled third party'},
+  internal_vapt:{label:'Internal VAPT', desc:'Client quarterly'},
+  patch_mgmt:{label:'Patch Mgmt', desc:'Monthly / quarterly patches'},
+  discom_audit:{label:'DISCOM Audit', desc:'Utility cybersecurity audit'},
+  dpdp_audit:{label:'DPDP', desc:'Data protection compliance'},
+  iso27001_audit:{label:'ISO 27001', desc:'Internal ISMS audit'},
+  cloud_review:{label:'Cloud Review', desc:'Cloud posture review'}
+};
+const CATEGORY_ORDER = ['external_vapt','internal_vapt','patch_mgmt','discom_audit','dpdp_audit','iso27001_audit','cloud_review'];
+
+function api(method, path, body){
+  const headers = {'Content-Type':'application/json'};
+  if(token) headers['X-Auth-Token'] = token;
+  return fetch(path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token), {
+    method: method, headers: headers, body: body ? JSON.stringify(body) : undefined
+  }).then(r => {
+    if(r.status === 401){ logout(); throw new Error('Session expired'); }
+    return r.json().catch(() => ({}));
+  });
+}
+
+function esc(s){ return String(s || '').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-GB') : '—'; }
+function statusBadge(status){ return '<span class="badge badge-' + status + '">' + (status || '—').replace('_',' ') + '</span>'; }
+function sevBadge(sev){ const s = (sev || 'low').toLowerCase(); const label = s==='crit'?'CRIT':s.toUpperCase(); return '<span class="badge badge-' + s + '">' + label + '</span>'; }
+function categoryBadge(cat){ return '<span class="badge badge-' + (cat || 'other') + '">' + (CATEGORIES[cat]?.label || cat || 'Other') + '</span>'; }
+
+// Tabs
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('.section');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  sections.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.tab).classList.add('active');
+  renderForTab(t.dataset.tab);
+}));
+
+function renderForTab(name){
+  if(name === 'projects') renderProjects();
+  if(name === 'matrix') renderMatrix();
+  if(name === 'deliverables') renderDeliverables();
+  if(name === 'tasks') renderTasks();
+  if(name === 'vulns') renderVulns();
+  if(name === 'incidents') renderIncidents();
+  if(name === 'risks') renderRisks();
+  if(name === 'compliance') renderCompliance();
+}
+
+function loadData(){
+  api('GET','/api/state').then(d => {
+    appData.projects = d.projects || [];
+    populateProjectSelects();
+    if(document.getElementById('matrix').classList.contains('active')) renderMatrix();
+  });
+  api('GET','/api/project-deliverables').then(d => {
+    if(d.success){ appData.deliverables = d.deliverables || []; renderOverview(); renderMatrix(); renderDeliverables(); }
+  });
+  api('GET','/api/security/overview').then(d => {
+    if(d.success){
+      appData.security = d;
+      renderOverview();
+      renderForTab(document.querySelector('.tab.active').dataset.tab);
+      document.getElementById('overviewLoading').style.display='none';
+      document.getElementById('overviewContent').style.display='block';
+    }
+  }).catch(e => document.getElementById('overviewLoading').innerHTML = '<p>Error: ' + esc(e.message) + '</p>');
+}
+
+function populateProjectSelects(){
+  const delivSel = document.getElementById('delivProject');
+  delivSel.innerHTML = appData.projects.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+  const taskSel = document.getElementById('taskProject');
+  taskSel.innerHTML = '<option value="">— Global IT Security —</option>' + appData.projects.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+}
+
+function renderOverview(){
+  const delivs = appData.deliverables || [];
+  const counts = {overdue:0,due_soon:0,valid:0,adhoc:0};
+  delivs.forEach(d => { counts[d.status || 'adhoc'] = (counts[d.status || 'adhoc']||0)+1; });
+
+  const kpis = [
+    {label:'Total Projects', value:appData.projects.length, icon:'P'},
+    {label:'Tracked Deliverables', value:delivs.length, icon:'D'},
+    {label:'Overdue', value:counts.overdue, icon:'!'},
+    {label:'Due Soon', value:counts.due_soon, icon:'⏳'},
+    {label:'Valid / On Track', value:counts.valid, icon:'✓'}
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k =>
+    '<div class="card kpi-card"><div class="kpi-header"><div><div class="kpi-label">' + k.label + '</div><div class="kpi-value">' + k.value + '</div></div><div class="kpi-icon">' + k.icon + '</div></div></div>'
+  ).join('');
+
+  // Projects with most overdue
+  const projMap = {};
+  delivs.forEach(d => {
+    if(!projMap[d.pid]) projMap[d.pid] = {overdue:0, due_soon:0};
+    if(d.status === 'overdue') projMap[d.pid].overdue++;
+    if(d.status === 'due_soon') projMap[d.pid].due_soon++;
+  });
+  const sortedProjs = Object.entries(projMap).filter(([k,v])=>v.overdue>0||v.due_soon>0).sort((a,b)=>b[1].overdue - a[1].overdue).slice(0,8);
+  document.getElementById('overdueProjects').innerHTML = sortedProjs.length ? sortedProjs.map(([pid,c]) => {
+    const p = appData.projects.find(x => x.id === pid);
+    return '<tr><td><div class="font-semibold">' + esc(p ? p.name : pid) + '</div></td><td>' + c.overdue + '</td><td>' + c.due_soon + '</td></tr>';
+  }).join('') : '<tr><td colspan="3" class="empty">No projects with overdue deliverables</td></tr>';
+
+  // Category summary
+  const catCounts = {};
+  delivs.forEach(d => {
+    if(!catCounts[d.category]) catCounts[d.category] = {overdue:0,due_soon:0,valid:0,total:0};
+    catCounts[d.category][d.status || 'valid']++;
+    catCounts[d.category].total++;
+  });
+  document.getElementById('categorySummary').innerHTML = CATEGORY_ORDER.filter(c => catCounts[c]).map(c => {
+    const cc = catCounts[c];
+    const pct = cc.total ? Math.round((cc.valid / cc.total) * 100) : 0;
+    return '<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:.875rem;font-weight:500;margin-bottom:.375rem"><span>' + categoryBadge(c) + '</span><span class="text-muted">' + cc.valid + '/' + cc.total + ' valid</span></div><div class="progress"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>';
+  }).join('');
+}
+
+function renderProjects(){
+  const rows = appData.projects || [];
+  document.getElementById('projectsTable').innerHTML = rows.map(p => {
+    let statusClass = 'badge-adhoc';
+    if(p.status === 'ontrack') statusClass = 'badge-valid';
+    else if(p.status === 'done') statusClass = 'badge-valid';
+    else if(p.status === 'delayed') statusClass = 'badge-due_soon';
+    else if(p.status === 'atrisk') statusClass = 'badge-overdue';
+    return '<tr><td><div class="font-semibold">' + esc(p.name) + '</div></td>' +
+      '<td>' + esc(p.bu) + '</td><td>' + esc(p.type) + '</td>' +
+      '<td>' + esc(p.infra_managed_by || '—') + '</td>' +
+      '<td>' + esc(p.spoc) + '</td>' +
+      '<td style="min-width:8rem"><div class="progress"><div class="progress-fill" style="width:' + (p.progress || 0) + '%"></div></div><div style="font-size:.75rem;color:hsl(var(--muted-foreground));margin-top:.25rem">' + (p.progress || 0) + '%</div></td>' +
+      '<td><span class="badge ' + statusClass + '">' + esc(p.status || '—') + '</span></td>' +
+      '<td>' + fmtDate(p.start) + '</td><td>' + fmtDate(p.due) + '</td><td>' + (p.team || '—') + '</td>' +
+      (userRole === 'admin' ? '<td style="text-align:right"><button class="btn btn-secondary btn-sm" onclick="editProject(\'' + p.id + '\')">Edit</button> <button class="btn btn-destructive btn-sm" onclick="deleteProject(\'' + p.id + '\')">Delete</button></td>' : '') +
+      '</tr>';
+  }).join('') || '<tr><td colspan="' + (userRole === 'admin' ? '11' : '10') + '" class="empty">No projects</td></tr>';
+}
+
+function renderMatrix(){
+  const projects = appData.projects || [];
+  const delivs = appData.deliverables || [];
+  const byProject = {};
+  delivs.forEach(d => { if(!byProject[d.pid]) byProject[d.pid] = {}; byProject[d.pid][d.category] = d; });
+
+  document.getElementById('matrixTable').innerHTML = projects.map(p => {
+    const rowId = 'matrix-row-' + p.id;
+    let cells = '';
+    CATEGORY_ORDER.forEach(cat => {
+      const d = (byProject[p.id] || {})[cat];
+      if(d){
+        cells += '<td class="matrix-cell" onclick="showDelivDetail(' + d.id + ')"><span class="status-dot ' + d.status + '" title="' + esc(d.name) + ' — ' + (d.days_left != null ? d.days_left + ' days left' : 'ad-hoc') + '"></span><div style="font-size:.65rem;color:hsl(var(--muted-foreground));margin-top:.25rem">' + (d.days_left != null ? d.days_left + 'd' : '—') + '</div></td>';
+      } else {
+        cells += '<td class="matrix-cell" style="opacity:.3">—</td>';
+      }
+    });
+    return '<tr>' +
+      '<td><div class="font-semibold">' + esc(p.name) + '</div><div style="font-size:.75rem;color:hsl(var(--muted-foreground))">' + esc(p.spoc) + '</div></td>' +
+      '<td>' + esc(p.bu) + '</td><td>' + esc(p.type) + '</td>' + cells +
+      '</tr>';
+  }).join('');
+}
+
+function renderDeliverables(){
+  const filter = document.getElementById('delivFilter').value;
+  let items = appData.deliverables || [];
+  if(filter !== 'all') items = items.filter(d => d.category === filter);
+
+  const over = items.filter(d => d.status === 'overdue');
+  const soon = items.filter(d => d.status === 'due_soon');
+  const valid = items.filter(d => d.status === 'valid' || d.status === 'adhoc');
+
+  const groups = [['Action needed — overdue', over, 'overdue'], ['Coming up — due soon', soon, 'due_soon'], ['On track — valid', valid, 'valid']];
+  let html = '';
+  groups.forEach(([title, list, cls]) => {
+    if(!list.length) return;
+    list.sort((a,b) => (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left));
+    html += '<div class="deliv-group"><span class="gt">' + title + '</span><span class="gc">' + list.length + '</span><span class="gline"></span></div>';
+    html += '<div class="deliv-grid">' + list.map(d => {
+      const p = appData.projects.find(x => x.id === d.pid);
+      const color = d.status === 'overdue' ? 'hsl(0 84% 60%)' : d.status === 'due_soon' ? 'hsl(38 92% 50%)' : 'hsl(142 76% 36%)';
+      const pct = d.status === 'overdue' ? 100 : (d.elapsed || 0);
+      return '<div class="card deliv-card ' + (d.status || 'valid') + '">' +
+        '<div class="deliv-head"><div><div class="deliv-title">' + esc(d.name) + '</div><div class="deliv-meta">' + categoryBadge(d.category) + '<span>·</span><span>' + esc(p ? p.name : d.pid) + '</span>' + (d.exec_type === 'thirdparty' ? '<span>·</span><span>Third party</span>' : '') + '</div></div></div>' +
+        '<div style="font-size:.875rem;color:hsl(var(--foreground))">' + esc(d.scope || '—') + '</div>' +
+        (d.remarks ? '<div style="font-size:.75rem;color:hsl(var(--muted-foreground));font-style:italic">Remarks: ' + esc(d.remarks) + '</div>' : '') +
+        '<div class="deliv-life"><div class="deliv-fill" style="width:' + pct + '%;background:' + color + '"></div><div class="deliv-today" style="left:' + pct + '%"></div></div>' +
+        '<div class="deliv-dates"><div><span class="k">Last performed</span><span>' + fmtDate(d.last_date) + '</span></div><div style="text-align:right"><span class="k">Next due</span><span style="color:' + color + '">' + fmtDate(d.next_date) + '</span></div></div>' +
+        '<div style="font-size:.75rem;color:hsl(var(--muted-foreground))">Owner: ' + esc(d.owner || '—') + ' · Frequency: ' + esc(d.frequency || '—') + '</div>' +
+        '<div class="deliv-actions"><button class="btn btn-secondary btn-sm" onclick="renewDeliv(' + d.id + ')">Mark done</button><button class="btn btn-outline btn-sm" onclick="editDeliv(' + d.id + ')">Edit</button><button class="btn btn-destructive btn-sm" onclick="deleteDeliv(' + d.id + ')">Delete</button></div>' +
+      '</div>';
+    }).join('') + '</div>';
+  });
+  document.getElementById('deliverablesContent').innerHTML = html || '<div class="empty">No deliverables found</div>';
+}
+
+function renderTasks(){
+  const rows = appData.security.tasks || [];
+  document.getElementById('tasksTable').innerHTML = rows.map(t => {
+    const proj = (appData.projects || []).find(p => p.id === t.pid);
+    return '<tr><td><div class="font-semibold">' + esc(t.title) + '</div></td><td>' + esc(proj ? proj.name : '—') + '</td><td>' + categoryBadge(t.category) + '</td><td>' + statusBadge(t.status) + '</td><td>' + sevBadge(t.severity) + '</td><td>' + esc(t.assignee) + '</td><td>' + fmtDate(t.start_date) + '</td><td>' + fmtDate(t.due_date) + '</td><td>' + fmtDate(t.completed_date) + '</td><td style="text-align:right"><button class="btn btn-secondary btn-sm" onclick="editTask(' + t.id + ')">Edit</button> <button class="btn btn-destructive btn-sm" onclick="deleteTask(' + t.id + ')">Delete</button></td></tr>';
+  }).join('') || '<tr><td colspan="10" class="empty">No security tasks</td></tr>';
+}
+
+function renderVulns(){
+  const rows = appData.security.vulnerabilities || [];
+  document.getElementById('vulnsTable').innerHTML = rows.map(v => '<tr><td><div class="font-semibold">' + esc(v.cve) + '</div></td><td>' + esc(v.asset) + '</td><td>' + sevBadge(v.severity) + '</td><td>' + (v.cvss || '—') + '</td><td>' + statusBadge(v.status) + '</td><td>' + fmtDate(v.discovered_date) + '</td><td>' + fmtDate(v.remediation_date) + '</td><td>' + esc(v.owner) + '</td></tr>').join('') || '<tr><td colspan="8" class="empty">No vulnerabilities</td></tr>';
+}
+
+function renderIncidents(){
+  const rows = appData.security.incidents || [];
+  document.getElementById('incidentsTable').innerHTML = rows.map(i => '<tr><td><div class="font-semibold">' + esc(i.title) + '</div><div style="font-size:.75rem;color:hsl(var(--muted-foreground))">' + esc((i.description || '').substring(0, 50)) + '…</div></td><td>' + sevBadge(i.severity) + '</td><td>' + statusBadge(i.status) + '</td><td>' + fmtDate(i.reported_date) + '</td><td>' + fmtDate(i.closed_date) + '</td><td>' + esc(i.owner) + '</td><td>' + esc(i.root_cause || '—') + '</td></tr>').join('') || '<tr><td colspan="7" class="empty">No incidents</td></tr>';
+}
+
+function renderRisks(){
+  const rows = appData.security.risks || [];
+  document.getElementById('risksTable').innerHTML = rows.map(r => '<tr><td>' + esc(r.risk_id) + '</td><td><div class="font-semibold">' + esc(r.title) + '</div></td><td>' + statusBadge(r.likelihood) + '</td><td>' + statusBadge(r.impact) + '</td><td><b>' + (r.score || '—') + '</b></td><td>' + statusBadge(r.status) + '</td><td>' + esc(r.mitigation || '—') + '</td><td>' + esc(r.owner) + '</td></tr>').join('') || '<tr><td colspan="8" class="empty">No risks</td></tr>';
+}
+
+function renderCompliance(){
+  const rows = appData.security.compliance || [];
+  document.getElementById('complianceTable').innerHTML = rows.map(c => '<tr><td>' + esc(c.framework) + '</td><td><div class="font-semibold">' + esc(c.requirement_id) + '</div><div style="font-size:.75rem;color:hsl(var(--muted-foreground))">' + esc(c.requirement) + '</div></td><td>' + statusBadge(c.status) + '</td><td>' + esc(c.evidence || '—') + '</td><td>' + esc(c.owner) + '</td><td>' + fmtDate(c.due_date) + '</td><td>' + fmtDate(c.completed_date) + '</td></tr>').join('') || '<tr><td colspan="7" class="empty">No compliance items</td></tr>';
+}
+
+// Deliverable modal
+window.openDelivModal = function(id){
+  document.getElementById('delivModalTitle').textContent = id ? 'Edit Deliverable' : 'Add Deliverable';
+  document.getElementById('delivId').value = id || '';
+  if(id){
+    const d = appData.deliverables.find(x => x.id === id);
+    if(d){
+      document.getElementById('delivName').value = d.name || '';
+      document.getElementById('delivProject').value = d.pid || '';
+      document.getElementById('delivCategory').value = d.category || 'other';
+      document.getElementById('delivFreq').value = d.frequency || 'annual';
+      document.getElementById('delivExec').value = d.exec_type || 'internal';
+      document.getElementById('delivLast').value = d.last_date || '';
+      document.getElementById('delivReminder').value = d.reminder_days || 30;
+      document.getElementById('delivOwner').value = d.owner || '';
+      document.getElementById('delivScope').value = d.scope || '';
+      document.getElementById('delivRemarks').value = d.remarks || '';
+    }
+  } else {
+    ['delivName','delivLast','delivOwner','delivScope','delivRemarks'].forEach(i => document.getElementById(i).value='');
+    document.getElementById('delivProject').value = appData.projects[0]?.id || '';
+    document.getElementById('delivCategory').value = 'external_vapt';
+    document.getElementById('delivFreq').value = 'annual';
+    document.getElementById('delivExec').value = 'thirdparty';
+    document.getElementById('delivReminder').value = 60;
+  }
+  document.getElementById('delivModal').classList.add('show');
+};
+window.closeDelivModal = function(){ document.getElementById('delivModal').classList.remove('show'); };
+window.onDelivCatChange = function(){
+  const cat = document.getElementById('delivCategory').value;
+  if(cat === 'external_vapt') document.getElementById('delivExec').value = 'thirdparty';
+  if(cat === 'internal_vapt') document.getElementById('delivExec').value = 'internal';
+};
+window.saveDeliv = function(){
+  const id = document.getElementById('delivId').value;
+  const body = {
+    pid: document.getElementById('delivProject').value,
+    name: document.getElementById('delivName').value,
+    category: document.getElementById('delivCategory').value,
+    frequency: document.getElementById('delivFreq').value,
+    exec_type: document.getElementById('delivExec').value,
+    last_date: document.getElementById('delivLast').value || new Date().toISOString().slice(0,10),
+    reminder_days: parseInt(document.getElementById('delivReminder').value,10) || 30,
+    owner: document.getElementById('delivOwner').value,
+    scope: document.getElementById('delivScope').value,
+    remarks: document.getElementById('delivRemarks').value
+  };
+  const method = id ? 'PATCH' : 'POST';
+  const path = id ? '/api/project-deliverables/' + id : '/api/project-deliverables';
+  api(method, path, body).then(() => {
+    closeDelivModal(); showToast(id ? 'Deliverable updated' : 'Deliverable created'); loadData();
+  }).catch(e => showToast('Error: ' + e.message));
+};
+window.editDeliv = function(id){ openDelivModal(id); };
+window.deleteDeliv = function(id){ if(!confirm('Delete this deliverable?')) return; api('DELETE','/api/project-deliverables/' + id).then(()=>{showToast('Deleted'); loadData();}).catch(e=>showToast('Error: '+e.message)); };
+window.renewDeliv = function(id){ api('PATCH','/api/project-deliverables/' + id, {last_date:new Date().toISOString().slice(0,10)}).then(()=>{showToast('Marked done — next cycle scheduled'); loadData();}).catch(e=>showToast('Error: '+e.message)); };
+window.showDelivDetail = function(id){ openDelivModal(id); };
+
+// Task modal
+window.openTaskModal = function(id){
+  document.getElementById('taskModalTitle').textContent = id ? 'Edit Task' : 'Add Task';
+  document.getElementById('taskId').value = id || '';
+  if(id){
+    const t = (appData.security.tasks || []).find(x => x.id === id);
+    if(t){
+      ['Title','Project','Category','Status','Severity','Assignee','StartDate','DueDate','CompletedDate','Notes'].forEach(k => {
+        const el = document.getElementById('task' + k);
+        const v = t[k.charAt(0).toLowerCase() + k.slice(1)];
+        if(el) el.value = v || '';
+      });
+    }
+  } else {
+    ['taskTitle','taskAssignee','taskStartDate','taskDueDate','taskCompletedDate','taskNotes'].forEach(i => document.getElementById(i).value='');
+    document.getElementById('taskProject').value=''; document.getElementById('taskCategory').value='general';
+    document.getElementById('taskStatus').value='todo'; document.getElementById('taskSeverity').value='medium';
+  }
+  document.getElementById('taskModal').classList.add('show');
+};
+window.closeTaskModal = function(){ document.getElementById('taskModal').classList.remove('show'); };
+window.saveTask = function(){
+  const id = document.getElementById('taskId').value;
+  const body = { title: document.getElementById('taskTitle').value, pid: document.getElementById('taskProject').value || null, category: document.getElementById('taskCategory').value, status: document.getElementById('taskStatus').value, severity: document.getElementById('taskSeverity').value, assignee: document.getElementById('taskAssignee').value, start_date: document.getElementById('taskStartDate').value || null, due_date: document.getElementById('taskDueDate').value || null, completed_date: document.getElementById('taskCompletedDate').value || null, notes: document.getElementById('taskNotes').value };
+  const method = id ? 'PATCH' : 'POST'; const path = id ? '/api/security/tasks/' + id : '/api/security/tasks';
+  api(method, path, body).then(()=>{closeTaskModal(); showToast(id?'Task updated':'Task created'); loadData();}).catch(e=>showToast('Error: '+e.message));
+};
+window.editTask = function(id){ openTaskModal(id); };
+window.deleteTask = function(id){ if(!confirm('Delete task?')) return; api('DELETE','/api/security/tasks/' + id).then(()=>{showToast('Deleted'); loadData();}).catch(e=>showToast('Error: '+e.message)); };
+
+// Project modal
+window.openProjectModal = function(id){
+  document.getElementById('projectModalTitle').textContent = id ? 'Edit Project' : 'Add Project';
+  document.getElementById('projectId').value = id || '';
+  if(id){
+    const p = (appData.projects || []).find(x => x.id === id);
+    if(p){
+      document.getElementById('projectName').value = p.name || '';
+      document.getElementById('projectBU').value = p.bu || '';
+      document.getElementById('projectType').value = p.type || '';
+      document.getElementById('projectInfra').value = p.infra_managed_by || '';
+      document.getElementById('projectSPOC').value = p.spoc || '';
+      document.getElementById('projectStatus').value = p.status || 'ontrack';
+      document.getElementById('projectProgress').value = p.progress || 0;
+      document.getElementById('projectStart').value = p.start || '';
+      document.getElementById('projectEnd').value = p.due || '';
+      document.getElementById('projectTeam').value = p.team || 0;
+      document.getElementById('projectBudget').value = p.budget || 0;
+    }
+  } else {
+    ['projectName','projectBU','projectType','projectInfra','projectSPOC','projectStart','projectEnd'].forEach(i => document.getElementById(i).value='');
+    document.getElementById('projectStatus').value='ontrack';
+    document.getElementById('projectProgress').value=0;
+    document.getElementById('projectTeam').value=0;
+    document.getElementById('projectBudget').value=0;
+  }
+  document.getElementById('projectModal').classList.add('show');
+};
+window.closeProjectModal = function(){ document.getElementById('projectModal').classList.remove('show'); };
+window.saveProject = function(){
+  const id = document.getElementById('projectId').value;
+  const body = {
+    name: document.getElementById('projectName').value,
+    bu: document.getElementById('projectBU').value,
+    type: document.getElementById('projectType').value,
+    infra_managed_by: document.getElementById('projectInfra').value,
+    spoc: document.getElementById('projectSPOC').value,
+    status: document.getElementById('projectStatus').value,
+    progress: parseInt(document.getElementById('projectProgress').value,10) || 0,
+    start: document.getElementById('projectStart').value || null,
+    due: document.getElementById('projectEnd').value || null,
+    team: parseInt(document.getElementById('projectTeam').value,10) || 0,
+    budget: parseInt(document.getElementById('projectBudget').value,10) || 0
+  };
+  const method = id ? 'PATCH' : 'POST';
+  const path = id ? '/api/projects/' + id : '/api/projects';
+  api(method, path, body).then(()=>{closeProjectModal(); showToast(id?'Project updated':'Project created'); loadData();}).catch(e=>showToast('Error: '+e.message));
+};
+window.editProject = function(id){ openProjectModal(id); };
+window.deleteProject = function(id){ if(!confirm('Delete this project and all its deliverables/tasks?')) return; api('DELETE','/api/projects/' + id).then(()=>{showToast('Project deleted'); loadData();}).catch(e=>showToast('Error: '+e.message)); };
+
+window.logout = function(){ localStorage.clear(); window.location.href='/login'; };
+function showToast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+
+// Init filter options
+const filterSel = document.getElementById('delivFilter');
+Object.keys(CATEGORIES).forEach(k => { const o=document.createElement('option'); o.value=k; o.textContent=CATEGORIES[k].label; filterSel.appendChild(o); });
+
+loadData();
+})();
+</script>
+</body>
+</html>

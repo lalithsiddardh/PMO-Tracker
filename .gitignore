@@ -1,0 +1,30 @@
+# Backend
+backend/target/
+backend/*.log
+backend/*.err
+backend/.project
+backend/application-local.properties
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/*.log
+frontend/*.err
+frontend/vite.pid
+
+# Runtime storage
+filestorage/
+
+# Environment / secrets
+.env
+.env.local
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store
